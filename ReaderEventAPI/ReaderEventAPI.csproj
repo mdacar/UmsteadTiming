@@ -10,6 +10,7 @@
     <PackageReference Include="Confluent.Kafka" Version="1.7.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.14" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Steeltoe.Extensions.Logging.DynamicLogger" Version="3.0.2" />
   </ItemGroup>
 
 

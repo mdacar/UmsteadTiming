@@ -1,6 +1,7 @@
 ﻿using Confluent.Kafka;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +14,19 @@ namespace ReaderEventAPI.Controllers
     [ApiController]
     public class ReaderEventController : ControllerBase
     {
+        private readonly ILogger<ReaderEventController> _logger;
 
+        public ReaderEventController(ILogger<ReaderEventController> logger)
+        {
+            _logger = logger;
+        }
 
         // POST api/<ReaderEvent>
         [HttpPost]
         public void Post([FromBody] TimeEntry value)
         {
+            _logger.LogTrace($"ReaderEventController Post called with {value}");
+
             var config = new ProducerConfig
             {
                 BootstrapServers = "pkc-epwny.eastus.azure.confluent.cloud:9092",
