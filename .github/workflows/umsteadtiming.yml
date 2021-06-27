@@ -1,0 +1,46 @@
+name: Deploy ASP.NET Core Web Application to Azure Spring Cloud umsteadtiming
+on:
+  push:
+    branches:
+    - master
+env:
+  APPLICATION_ENTRY_POINT: ReaderEventAPI.dll
+  AZURE_RESOURCE_GROUP: cloud-shell-storage-southcentralus
+  AZURE_SPRING_CLOUD: umsteadtimingsvc
+  AZURE_SPRING_CLOUD_APP: umsteadtiming
+  AZURE_SPRING_CLOUD_DEPLOYMENT_NAME: default
+  AZURE_SPRING_CLOUD_PACKAGE_PATH: ./published
+  CONFIGURATION: Release
+  DOTNET_CORE_VERSION: 3.1.x
+  SPRING_CLOUD_RUNTIME: NetCore_31
+  WORKING_DIRECTORY: ReaderEventAPI
+  ZIP_FILE_NAME: file.zip
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v2
+    - name: Install dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+    - name: Restore packages
+      run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
+    - name: Azure login
+      uses: azure/login@v1.1
+      with:
+        creds: ${{ secrets.umsteadtiming_SPN }}
+    - name: Install Azure CLI extension
+      run: >
+        az extension add --name spring-cloud --yes
+    - name: Build app
+      run: >
+        dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --output "${{ env.AZURE_SPRING_CLOUD_PACKAGE_PATH }}"
+    - name: Zip app
+      run: >
+        zip -r "../${{ env.ZIP_FILE_NAME }}" . && mv "../${{ env.ZIP_FILE_NAME }}" "${{ env.ZIP_FILE_NAME }}"
+      working-directory: ${{ env.AZURE_SPRING_CLOUD_PACKAGE_PATH }}
+    - name: Deploy app
+      run: >
+        az spring-cloud app deploy -n "${{ env.AZURE_SPRING_CLOUD_APP }}" --deployment "${{ env.AZURE_SPRING_CLOUD_DEPLOYMENT_NAME }}" --runtime-version ${{ env.SPRING_CLOUD_RUNTIME }} --main-entry "${{ env.APPLICATION_ENTRY_POINT }}" --artifact-path "${{ env.AZURE_SPRING_CLOUD_PACKAGE_PATH }}/${{ env.ZIP_FILE_NAME }}" -s ${{ env.AZURE_SPRING_CLOUD }} -g ${{ env.AZURE_RESOURCE_GROUP }}
