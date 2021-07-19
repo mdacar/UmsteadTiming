@@ -4,14 +4,14 @@
     "D:\\dev\\UmsteadTiming\\ReaderEventAPI\\ReaderEventAPI.csproj": {}
   },
   "projects": {
-    "D:\\dev\\UmsteadTiming\\ReaderEventAPI\\ReaderEventAPI.csproj": {
+    "D:\\dev\\UmsteadTiming\\MetricsCollection\\MetricsCollection.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\dev\\UmsteadTiming\\ReaderEventAPI\\ReaderEventAPI.csproj",
-        "projectName": "ReaderEventAPI",
-        "projectPath": "D:\\dev\\UmsteadTiming\\ReaderEventAPI\\ReaderEventAPI.csproj",
+        "projectUniqueName": "D:\\dev\\UmsteadTiming\\MetricsCollection\\MetricsCollection.csproj",
+        "projectName": "MetricsCollection",
+        "projectPath": "D:\\dev\\UmsteadTiming\\MetricsCollection\\MetricsCollection.csproj",
         "packagesPath": "C:\\Users\\micha\\.nuget\\packages\\",
-        "outputPath": "D:\\dev\\UmsteadTiming\\ReaderEventAPI\\obj\\",
+        "outputPath": "D:\\dev\\UmsteadTiming\\MetricsCollection\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -44,9 +44,85 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "dependencies": {
+            "InfluxDB.Client": {
+              "target": "Package",
+              "version": "[2.0.0, )"
+            },
+            "InfluxDB.Client.Core": {
+              "target": "Package",
+              "version": "[2.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.301\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\dev\\UmsteadTiming\\ReaderEventAPI\\ReaderEventAPI.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\dev\\UmsteadTiming\\ReaderEventAPI\\ReaderEventAPI.csproj",
+        "projectName": "ReaderEventAPI",
+        "projectPath": "D:\\dev\\UmsteadTiming\\ReaderEventAPI\\ReaderEventAPI.csproj",
+        "packagesPath": "C:\\Users\\micha\\.nuget\\packages\\",
+        "outputPath": "D:\\dev\\UmsteadTiming\\ReaderEventAPI\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\micha\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "targetAlias": "netcoreapp3.1",
+            "projectReferences": {
+              "D:\\dev\\UmsteadTiming\\MetricsCollection\\MetricsCollection.csproj": {
+                "projectPath": "D:\\dev\\UmsteadTiming\\MetricsCollection\\MetricsCollection.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
+          "dependencies": {
             "Confluent.Kafka": {
               "target": "Package",
               "version": "[1.7.0, )"
+            },
+            "Microsoft.AspNet.WebApi.Core": {
+              "target": "Package",
+              "version": "[5.2.7, )"
             },
             "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
               "target": "Package",
@@ -79,7 +155,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.301\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.302\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -4,6 +4,6 @@
     <ActiveDebugProfile>Docker</ActiveDebugProfile>
     <Controller_SelectedScaffolderID>ApiControllerEmptyScaffolder</Controller_SelectedScaffolderID>
     <Controller_SelectedScaffolderCategoryPath>root/Common/Api</Controller_SelectedScaffolderCategoryPath>
-    <NameOfLastUsedPublishProfile>C:\_source\personal\UmsteadTiming\ReaderEventAPI\Properties\PublishProfiles\ReaderEventAPI - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>D:\dev\UmsteadTiming\ReaderEventAPI\Properties\PublishProfiles\registry.hub.docker.com_mdacar.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>
