@@ -14,7 +14,7 @@ namespace TimeEntryProcessor
 {
     public class Worker : BackgroundService
     {
-        private const string METRIC_PREFIX = "time_entry_processor";
+        public const string METRIC_PREFIX = "time_entry_processor";
         private readonly InfluxClient _influxClient;
         private readonly ILogger<Worker> _logger;
         private const string KAFKA_TOPIC = "time_entries";
@@ -48,7 +48,8 @@ namespace TimeEntryProcessor
                         _influxClient.SendMetric($"{METRIC_PREFIX}_gotmessage", 1);
                         //Got a message, do something with it now
                         var timeEntry = JsonConvert.DeserializeObject<TimeEntry>(consumeResult.Message.Value);
-                        Console.WriteLine($"{timeEntry.RaceXRunnerID} - {timeEntry.AbsoluteTime}");
+                        
+                        
                     }
 
                     await Task.Delay(1000, stoppingToken);
