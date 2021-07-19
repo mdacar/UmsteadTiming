@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  readereventapi:
+    image: ${DOCKER_REGISTRY-}readereventapi
+    build:
+      context: .
+      dockerfile: ReaderEventAPI/Dockerfile
+
+  timeentryfactory:
+    image: ${DOCKER_REGISTRY-}timeentryfactory
+    build:
+      context: .
+      dockerfile: TimeEntryFactory/Dockerfile
+

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Newtonsoft.Json;
-
+using System.Threading.Tasks;
 
 namespace ReaderEventAPI.Controllers
 {
@@ -44,10 +44,11 @@ namespace ReaderEventAPI.Controllers
                 using (var producer = new ProducerBuilder<Null, string>(config).Build())
                 {
                     //One entry in the stream per tag read
-                    foreach (var tagRead in tagReads)
+                    Parallel.ForEach(tagReads, tagRead =>
                     {
-                        producer.Produce("time_entries", new Message<Null, string> { Value = JsonConvert.SerializeObject(tagRead) }, DeliveryHandler);
-                    }
+                        producer.Produce("reader_events", new Message<Null, string> { Value = JsonConvert.SerializeObject(tagRead) }, DeliveryHandler);
+                    });
+                    
                     
                     producer.Flush(TimeSpan.FromSeconds(10));
                 }
@@ -66,6 +67,9 @@ namespace ReaderEventAPI.Controllers
 
         private void DeliveryHandler(DeliveryReport<Null, string> report)
         {
+            if (report.Error.IsError)
+                _influxClient.SendMetric("reader_event_stream_error", 1);
+
             Console.WriteLine(report.Error.Reason);
         }
 

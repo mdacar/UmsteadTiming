@@ -14,7 +14,7 @@ namespace TimeEntryFactory
         public long ReaderTimestamp { get; set; }
         public int RFIDReaderID { get; set; }
         public int TimeEntryStatusID { get; set; }
-        public int TimeEntrySource { get; set; }
+        public int? TimeEntrySource { get; set; }
         public string TagType { get; set; }
         
 

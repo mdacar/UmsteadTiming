@@ -6843,23 +6843,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\micha\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\mdacar\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\dev\\UmsteadTiming\\ReaderEventAPI\\ReaderEventAPI.csproj",
+      "projectUniqueName": "C:\\_source\\personal\\UmsteadTiming\\ReaderEventAPI\\ReaderEventAPI.csproj",
       "projectName": "ReaderEventAPI",
-      "projectPath": "D:\\dev\\UmsteadTiming\\ReaderEventAPI\\ReaderEventAPI.csproj",
-      "packagesPath": "C:\\Users\\micha\\.nuget\\packages\\",
-      "outputPath": "D:\\dev\\UmsteadTiming\\ReaderEventAPI\\obj\\",
+      "projectPath": "C:\\_source\\personal\\UmsteadTiming\\ReaderEventAPI\\ReaderEventAPI.csproj",
+      "packagesPath": "C:\\Users\\mdacar\\.nuget\\packages\\",
+      "outputPath": "C:\\_source\\personal\\UmsteadTiming\\ReaderEventAPI\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\micha\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\mdacar\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -6874,8 +6876,8 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "projectReferences": {
-            "D:\\dev\\UmsteadTiming\\MetricsCollection\\MetricsCollection.csproj": {
-              "projectPath": "D:\\dev\\UmsteadTiming\\MetricsCollection\\MetricsCollection.csproj"
+            "C:\\_source\\personal\\UmsteadTiming\\MetricsCollection\\MetricsCollection.csproj": {
+              "projectPath": "C:\\_source\\personal\\UmsteadTiming\\MetricsCollection\\MetricsCollection.csproj"
             }
           }
         }
