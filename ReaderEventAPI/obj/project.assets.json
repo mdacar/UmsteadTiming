@@ -6843,19 +6843,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Michael\\.nuget\\packages\\": {}
+    "C:\\Users\\micha\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\dev\\UmsteadTiming\\ReaderEventAPI\\ReaderEventAPI.csproj",
+      "projectUniqueName": "D:\\dev\\UmsteadTiming\\ReaderEventAPI\\ReaderEventAPI.csproj",
       "projectName": "ReaderEventAPI",
-      "projectPath": "C:\\dev\\UmsteadTiming\\ReaderEventAPI\\ReaderEventAPI.csproj",
-      "packagesPath": "C:\\Users\\Michael\\.nuget\\packages\\",
-      "outputPath": "C:\\dev\\UmsteadTiming\\ReaderEventAPI\\obj\\",
+      "projectPath": "D:\\dev\\UmsteadTiming\\ReaderEventAPI\\ReaderEventAPI.csproj",
+      "packagesPath": "C:\\Users\\micha\\.nuget\\packages\\",
+      "outputPath": "D:\\dev\\UmsteadTiming\\ReaderEventAPI\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\Michael\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\micha\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -6869,8 +6874,8 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "projectReferences": {
-            "C:\\dev\\UmsteadTiming\\MetricsCollection\\MetricsCollection.csproj": {
-              "projectPath": "C:\\dev\\UmsteadTiming\\MetricsCollection\\MetricsCollection.csproj"
+            "D:\\dev\\UmsteadTiming\\MetricsCollection\\MetricsCollection.csproj": {
+              "projectPath": "D:\\dev\\UmsteadTiming\\MetricsCollection\\MetricsCollection.csproj"
             }
           }
         }
@@ -6924,7 +6929,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.205\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.302\\RuntimeIdentifierGraph.json"
       }
     }
   },
