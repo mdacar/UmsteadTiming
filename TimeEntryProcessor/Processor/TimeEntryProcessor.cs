@@ -34,7 +34,8 @@ namespace TimeEntryProcessor.Processor
                     notificationRequest.Message = split.NotificationMessageFormat
                         .Replace("{{RunnerName}}", $"{split.Runner.FirstName} {split.Runner.LastName}")
                         .Replace("{{Distance}}", $"{split.Distance}")
-                        .Replace("{{CheckPointName}}", split.CheckPointName);
+                        .Replace("{{CheckPointName}}", split.CheckPointName)
+                        .Replace("{{SplitTime}}", split.SplitTimeFormatted);
                    
                     SendNotificationRequestTostream(notificationRequest);
 

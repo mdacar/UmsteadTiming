@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Dapper;
 using System.Data.SqlClient;
+using MetricsCollection;
 
 namespace TimeEntryFactory
 {
@@ -11,6 +12,8 @@ namespace TimeEntryFactory
     
     internal class Race
     {
+
+         
 
         public const string SqlConnectionString = "Server=tcp:bfoe9kr5v7.database.windows.net,1433;Database=UltimateTiming;User ID=umstead@bfoe9kr5v7;Password=TrailRun100;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;";
 
@@ -23,6 +26,8 @@ namespace TimeEntryFactory
 
         public static Race GetCurrentRace()
         {
+            InfluxClient _influxClient = new InfluxClient();
+            var startDate = DateTime.Now;
             Race race = MemoryCache.Default.Get("Current") as Race;
             if (race == null)
             {
@@ -38,6 +43,8 @@ namespace TimeEntryFactory
                     MemoryCache.Default.Add("Current", race, new CacheItemPolicy() { AbsoluteExpiration = DateTimeOffset.Now.AddHours(1) });
                 }
             }
+            var endDate = DateTime.Now;
+            _influxClient.SendMetric($"{Worker.METRIC_PREFIX}_get_current_race_timing", (int)endDate.Subtract(startDate).TotalMilliseconds);
 
             return race;
         }
