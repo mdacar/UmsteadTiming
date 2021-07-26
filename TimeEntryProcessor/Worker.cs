@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using TimeEntryProcessor.Processor;
 
 namespace TimeEntryProcessor
 {
@@ -48,7 +49,8 @@ namespace TimeEntryProcessor
                         _influxClient.SendMetric($"{METRIC_PREFIX}_gotmessage", 1);
                         //Got a message, do something with it now
                         var timeEntry = JsonConvert.DeserializeObject<TimeEntry>(consumeResult.Message.Value);
-                        
+                        var processor = new TimeEntryProcessingFacade();
+                        processor.ProcessTimeEntry(timeEntry);
                         
                     }
 

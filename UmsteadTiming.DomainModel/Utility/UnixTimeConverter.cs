@@ -2,7 +2,7 @@
 using System.Text;
 using System.Threading;
 
-namespace UltimateTiming.Domain
+namespace UltimateTiming.DomainModel
 {
     public class UnixTimeConverter
     {

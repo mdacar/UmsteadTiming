@@ -8,12 +8,15 @@
 
   <ItemGroup>
     <PackageReference Include="Confluent.Kafka" Version="1.7.0" />
+    <PackageReference Include="Dapper" Version="2.0.90" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.17" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MetricsCollection\MetricsCollection.csproj" />
+    <ProjectReference Include="..\UmsteadTiming.DomainModel\UmsteadTiming.DomainModel.csproj" />
   </ItemGroup>
 </Project>

@@ -2,7 +2,6 @@
 using System;
 using System.Security.Cryptography;
 using System.Text;
-using UltimateTiming.Domain;
 
 namespace UltimateTiming.DomainModel
 {

@@ -8,11 +8,11 @@ using System.Text;
 
 namespace TimeEntryProcessor.Processor
 {
-    internal class TimeEntryProcessor
+    internal class TimeEntryProcessingFacade
     {
         private readonly InfluxClient _influxClient;
 
-        public TimeEntryProcessor()
+        public TimeEntryProcessingFacade()
         {
             _influxClient = new InfluxClient();
         }
@@ -63,12 +63,20 @@ namespace TimeEntryProcessor.Processor
 
         private Split GetSplit(TimeEntry entry)
         {
+            var repo = new RaceRepository();
+            var race = repo.GetCurrentRace();
+            var response = race.AddTimeEntry(new UltimateTiming.DomainModel.TimeEntryRequest()
+            {
+
+            });
+            var split = response.NewSplit;
             return new Split();
         }
 
         private void SaveTimeEntry(TimeEntry entry)
         {
-            //Save to the DB
+            RaceRepository repo = new RaceRepository();
+            repo.SaveTimeEntry(entry);
         }
 
         private ProducerConfig GetProducerConfig()
