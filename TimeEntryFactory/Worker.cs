@@ -23,13 +23,13 @@ namespace TimeEntryFactory
         public Worker(ILogger<Worker> logger, IConfiguration configuration)
         {
             _logger = logger;
-            _influxClient = new InfluxClient();
+            _influxClient = new InfluxClient(configuration["InfluxClientToken"]);
             _configuration = configuration;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var currentRace = Race.GetCurrentRace(_configuration["UltimateTimingDBConnection"]);
+            var currentRace = Race.GetCurrentRace(_configuration);
 
             _influxClient.SendMetric($"{Worker.METRIC_PREFIX}_time_entry_factory_execute", 1);
             var config = GetConsumerConfig();

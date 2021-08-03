@@ -5,6 +5,7 @@ using System.Text;
 using Dapper;
 using System.Data.SqlClient;
 using MetricsCollection;
+using Microsoft.Extensions.Configuration;
 
 namespace TimeEntryFactory
 {
@@ -20,15 +21,15 @@ namespace TimeEntryFactory
         private const string sqlTimeEntrySource = "SELECT ID, Description FROM TimeEntrySource WHERE RaceID = (SELECT [Setting] FROm ApplicationSettings WHERE [Key] = 'CurrentRaceID')";
 
 
-        public static Race GetCurrentRace(string connString)
+        public static Race GetCurrentRace(IConfiguration configuration)
         {
-            InfluxClient _influxClient = new InfluxClient();
+            InfluxClient _influxClient = new InfluxClient(configuration["InfluxClientToken"]);
             var startDate = DateTime.Now;
             Race race = MemoryCache.Default.Get("Current") as Race;
             if (race == null)
             {
                 //Get it from the DB and load it into the cache
-                using (var conn = new SqlConnection(connString))
+                using (var conn = new SqlConnection(configuration["UltimateTimingDBConnection"]))
                 {
                     var races = (List<Race>)conn.Query<Race>(sqlRace);
                     race = races[0];
