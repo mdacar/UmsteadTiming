@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Steeltoe.Extensions.Logging;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
 
 namespace ReaderEventAPI
 {
@@ -26,6 +29,19 @@ namespace ReaderEventAPI
                     logging.ClearProviders();
                     logging.AddConsole();
                     logging.AddDynamicConsole();
+                })
+                .ConfigureAppConfiguration((context, config) =>
+                {
+                    var builtConfig = config.Build();
+
+                    var keyVaultUrl = builtConfig["KeyVaultUrl"];
+                    var tenantId = builtConfig["KeyVaultTenantId"];
+                    var clientId = builtConfig["KeyVaultClientId"];
+                    var clientSecret = builtConfig["KeyVaultClientSecretId"];
+
+                    var creds = new ClientSecretCredential(tenantId, clientId, clientSecret);
+                    var client = new SecretClient(new Uri(keyVaultUrl), creds);
+                    config.AddAzureKeyVault(client, new AzureKeyVaultConfigurationOptions());
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

@@ -9,7 +9,12 @@ namespace TimeEntryProcessor.Processor
 {
     internal class RaceRepository
     {
-        private const string SqlConnectionString = "Server=tcp:bfoe9kr5v7.database.windows.net,1433;Database=UltimateTiming;User ID=umstead@bfoe9kr5v7;Password=TrailRun100;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;";
+        private readonly string SqlConnectionString;
+
+        public RaceRepository(string connString)
+        {
+            SqlConnectionString = connString;
+        }
 
         public Race GetCurrentRace()
         {

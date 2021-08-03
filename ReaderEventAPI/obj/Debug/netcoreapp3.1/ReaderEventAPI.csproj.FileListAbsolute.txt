@@ -158,3 +158,12 @@ C:\_source\personal\UmsteadTiming\ReaderEventAPI\bin\Debug\netcoreapp3.1\Metrics
 C:\_source\personal\UmsteadTiming\ReaderEventAPI\bin\Debug\netcoreapp3.1\System.Reactive.dll
 C:\_source\personal\UmsteadTiming\ReaderEventAPI\bin\Debug\netcoreapp3.1\MetricsCollection.pdb
 C:\_source\personal\UmsteadTiming\ReaderEventAPI\bin\Debug\netcoreapp3.1\System.Reactive.xml
+D:\dev\UmsteadTiming\ReaderEventAPI\bin\Debug\netcoreapp3.1\Azure.Core.dll
+D:\dev\UmsteadTiming\ReaderEventAPI\bin\Debug\netcoreapp3.1\Azure.Extensions.AspNetCore.Configuration.Secrets.dll
+D:\dev\UmsteadTiming\ReaderEventAPI\bin\Debug\netcoreapp3.1\Azure.Identity.dll
+D:\dev\UmsteadTiming\ReaderEventAPI\bin\Debug\netcoreapp3.1\Azure.Security.KeyVault.Secrets.dll
+D:\dev\UmsteadTiming\ReaderEventAPI\bin\Debug\netcoreapp3.1\Microsoft.Bcl.AsyncInterfaces.dll
+D:\dev\UmsteadTiming\ReaderEventAPI\bin\Debug\netcoreapp3.1\Microsoft.Identity.Client.dll
+D:\dev\UmsteadTiming\ReaderEventAPI\bin\Debug\netcoreapp3.1\Microsoft.Identity.Client.Extensions.Msal.dll
+D:\dev\UmsteadTiming\ReaderEventAPI\bin\Debug\netcoreapp3.1\System.Memory.Data.dll
+D:\dev\UmsteadTiming\ReaderEventAPI\bin\Debug\netcoreapp3.1\System.Text.Encodings.Web.dll

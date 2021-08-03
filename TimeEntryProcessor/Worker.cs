@@ -1,5 +1,6 @@
 using Confluent.Kafka;
 using MetricsCollection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -17,13 +18,15 @@ namespace TimeEntryProcessor
     {
         public const string METRIC_PREFIX = "time_entry_processor";
         private readonly InfluxClient _influxClient;
+        private readonly IConfiguration _configuration;
         private readonly ILogger<Worker> _logger;
         private const string KAFKA_TOPIC = "time_entries";
 
-        public Worker(ILogger<Worker> logger)
+        public Worker(ILogger<Worker> logger, IConfiguration configuration)
         {
+            _configuration = configuration;
             _logger = logger;
-            _influxClient = new InfluxClient();
+            _influxClient = new InfluxClient(_configuration["InfluxClientToken"]);
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -49,7 +52,7 @@ namespace TimeEntryProcessor
                         _influxClient.SendMetric($"{METRIC_PREFIX}_gotmessage", 1);
                         //Got a message, do something with it now
                         var timeEntry = JsonConvert.DeserializeObject<TimeEntry>(consumeResult.Message.Value);
-                        var processor = new TimeEntryProcessingFacade();
+                        var processor = new TimeEntryProcessingFacade(_configuration);
                         processor.ProcessTimeEntry(timeEntry);
                         
                     }

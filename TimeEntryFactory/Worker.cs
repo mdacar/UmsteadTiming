@@ -9,6 +9,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Configuration;
 
 namespace TimeEntryFactory
 {
@@ -16,17 +17,19 @@ namespace TimeEntryFactory
     {
         private readonly ILogger<Worker> _logger;
         private readonly InfluxClient _influxClient;
+        private readonly IConfiguration _configuration;
         public const string METRIC_PREFIX = "time_entry_factory";
 
-        public Worker(ILogger<Worker> logger)
+        public Worker(ILogger<Worker> logger, IConfiguration configuration)
         {
             _logger = logger;
             _influxClient = new InfluxClient();
+            _configuration = configuration;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var currentRace = Race.GetCurrentRace();
+            var currentRace = Race.GetCurrentRace(_configuration["UltimateTimingDBConnection"]);
 
             _influxClient.SendMetric($"{Worker.METRIC_PREFIX}_time_entry_factory_execute", 1);
             var config = GetConsumerConfig();
@@ -123,12 +126,12 @@ namespace TimeEntryFactory
         {
             return new ConsumerConfig
             {
-                BootstrapServers = "pkc-epwny.eastus.azure.confluent.cloud:9092",
+                BootstrapServers = _configuration["ConfluentKafkaServer"],
                 ClientId = Dns.GetHostName(),
                 SaslMechanism = SaslMechanism.Plain,
                 SecurityProtocol = SecurityProtocol.SaslSsl,
-                SaslUsername = "DL7ZEA3FYCX4RS3Z",
-                SaslPassword = "sYtS2HnvacXEwVh6thsvujyKCdZbfrKaGRSKWYyzoFD9jD6OhlA+0fDy+Fifef7j",
+                SaslUsername = _configuration["ConfluentKafkaUsername"],
+                SaslPassword = _configuration["ConfluentKafkaPassword"],
                 GroupId = "TimeEntryFactory"
             };
         }
@@ -137,12 +140,12 @@ namespace TimeEntryFactory
         {
             return new ProducerConfig
             {
-                BootstrapServers = "pkc-epwny.eastus.azure.confluent.cloud:9092",
+                BootstrapServers = _configuration["ConfluentKafkaServer"],
                 ClientId = Dns.GetHostName(),
                 SaslMechanism = SaslMechanism.Plain,
                 SecurityProtocol = SecurityProtocol.SaslSsl,
-                SaslUsername = "DL7ZEA3FYCX4RS3Z",
-                SaslPassword = "sYtS2HnvacXEwVh6thsvujyKCdZbfrKaGRSKWYyzoFD9jD6OhlA+0fDy+Fifef7j",
+                SaslUsername = _configuration["ConfluentKafkaUsername"],
+                SaslPassword = _configuration["ConfluentKafkaPassword"],
             };
         }
 

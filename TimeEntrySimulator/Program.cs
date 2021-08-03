@@ -1,19 +1,42 @@
-﻿using RestSharp;
+﻿using Microsoft.Azure.KeyVault;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TimeEntrySimulator
 {
     class Program
     {
-        static void Main(string[] args)
+        async static Task Main(string[] args)
         {
             Random randomizer = new Random();
 
-            SqlConnection conn = new SqlConnection("Server=tcp:bfoe9kr5v7.database.windows.net,1433;Database=UltimateTiming;User ID=umstead@bfoe9kr5v7;Password=TrailRun100;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;");
+            string clientId = "13673b99-e9d8-437f-84df-3a0a6558fb54";
+            string secretUrl = "https://umsteadtimingkeys.vault.azure.net/";
+            string clientSecret = "5RWXSMvSHx6YC.j3A2h_M0K21.-UA4eJx_";
+            //string tenantId = "8f70917d-2628-45d3-a2fa-5a768a3e00ea";
+
+            var client = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(
+                async (string auth, string res, string scope) =>
+                {
+                    var authContext = new AuthenticationContext(auth);
+                    var creds = new ClientCredential(clientId, clientSecret);
+                    AuthenticationResult result = await authContext.AcquireTokenAsync(res, creds);
+                    if (result == null)
+                        throw new Exception("Failed to retrieve token");
+
+                    return result.AccessToken;
+                }
+                ));
+
+            var secretConnString = await client.GetSecretAsync(secretUrl, "UltimateTimingDBConnection");
+
+            SqlConnection conn = new SqlConnection(secretConnString.Value);
             conn.Open();
             string sql = @"SELECT rdr.ReaderName, rte.ReaderTimestamp, 1 AS 'AntennaNumber', rxr.TagID
                             FROM RunnerTimeEntry rte INNER JOIN RFIDReader rdr ON rte.RFIDReaderID = rdr.ID
