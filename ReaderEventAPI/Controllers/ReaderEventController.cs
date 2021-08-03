@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace ReaderEventAPI.Controllers
 {
@@ -17,11 +18,14 @@ namespace ReaderEventAPI.Controllers
     {
         private readonly ILogger<ReaderEventController> _logger;
         private readonly InfluxClient _influxClient;
+        private readonly IConfiguration _configuration;
 
-        public ReaderEventController(ILogger<ReaderEventController> logger)
+        public ReaderEventController(ILogger<ReaderEventController> logger, IConfiguration configuration)
         {
+            _configuration = configuration;
             _logger = logger;
-            _influxClient = new InfluxClient();
+            _influxClient = new InfluxClient(_configuration["InfluxClientToken"]);
+            
         }
 
         // POST api/<ReaderEvent>
@@ -33,12 +37,12 @@ namespace ReaderEventAPI.Controllers
             {
                 var config = new ProducerConfig
                 {
-                    BootstrapServers = "pkc-epwny.eastus.azure.confluent.cloud:9092",
+                    BootstrapServers = _configuration["ConfluentKafkaServer"],
                     ClientId = Dns.GetHostName(),
                     SaslMechanism = SaslMechanism.Plain,
                     SecurityProtocol = SecurityProtocol.SaslSsl,
-                    SaslUsername = "DL7ZEA3FYCX4RS3Z",
-                    SaslPassword = "sYtS2HnvacXEwVh6thsvujyKCdZbfrKaGRSKWYyzoFD9jD6OhlA+0fDy+Fifef7j",
+                    SaslUsername = _configuration["ConfluentKafkaUsername"],
+                    SaslPassword = _configuration["ConfluentKafkaPassword"],
                 };
 
                 using (var producer = new ProducerBuilder<Null, string>(config).Build())

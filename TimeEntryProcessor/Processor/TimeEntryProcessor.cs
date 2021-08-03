@@ -1,5 +1,6 @@
 ﻿using Confluent.Kafka;
 using MetricsCollection;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,13 @@ namespace TimeEntryProcessor.Processor
 {
     internal class TimeEntryProcessingFacade
     {
+        private readonly IConfiguration _configuration;
         private readonly InfluxClient _influxClient;
 
-        public TimeEntryProcessingFacade()
+        public TimeEntryProcessingFacade(IConfiguration configuration)
         {
-            _influxClient = new InfluxClient();
+            _configuration = configuration;
+            _influxClient = new InfluxClient(_configuration["InfluxClientToken"]);
         }
 
         public void ProcessTimeEntry(TimeEntry entry)
@@ -63,7 +66,7 @@ namespace TimeEntryProcessor.Processor
 
         private Split GetSplit(TimeEntry entry)
         {
-            var repo = new RaceRepository();
+            var repo = new RaceRepository(_configuration["UltimateTimingDBConnection"]);
             var race = repo.GetCurrentRace();
             var response = race.AddTimeEntry(new UltimateTiming.DomainModel.TimeEntryRequest()
             {
@@ -75,7 +78,7 @@ namespace TimeEntryProcessor.Processor
 
         private void SaveTimeEntry(TimeEntry entry)
         {
-            RaceRepository repo = new RaceRepository();
+            RaceRepository repo = new RaceRepository(_configuration["UltimateTimingDBConnection"]);
             repo.SaveTimeEntry(entry);
         }
 
@@ -83,12 +86,12 @@ namespace TimeEntryProcessor.Processor
         {
             return new ProducerConfig
             {
-                BootstrapServers = "pkc-epwny.eastus.azure.confluent.cloud:9092",
+                BootstrapServers = _configuration["ConfluentKafkaServer"],
                 ClientId = Dns.GetHostName(),
                 SaslMechanism = SaslMechanism.Plain,
                 SecurityProtocol = SecurityProtocol.SaslSsl,
-                SaslUsername = "DL7ZEA3FYCX4RS3Z",
-                SaslPassword = "sYtS2HnvacXEwVh6thsvujyKCdZbfrKaGRSKWYyzoFD9jD6OhlA+0fDy+Fifef7j",
+                SaslUsername = _configuration["ConfluentKafkaUsername"],
+                SaslPassword = _configuration["ConfluentKafkaPassword"],
             };
         }
     }
