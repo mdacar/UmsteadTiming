@@ -11,7 +11,7 @@ namespace UltimateTiming.DomainModel
 
         public DateTime AbsoluteTime { get; set; }
 
-        public string TagId { get; set; }
+        public Guid RaceXRunnerID { get; set; }
 
         public TimeEntrySource Source { get; set; }
 

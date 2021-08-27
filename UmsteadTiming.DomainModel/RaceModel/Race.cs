@@ -183,12 +183,12 @@ namespace UltimateTiming.DomainModel
 
         #region Runner Related
 
-        private Runner FindRunner(string tagId)
+        private Runner FindRunner(string raceXRunnerId)
         {
-            var runner = Runners.Where(r => r.TagId == tagId).FirstOrDefault();
+            var runner = Runners.Where(r => r.RaceXRunnerId == raceXRunnerId).FirstOrDefault();
             if (runner == null)
             {
-                throw new RunnerNotFoundException(tagId);
+                throw new RunnerNotFoundException(raceXRunnerId);
             }
 
             return runner;
@@ -260,8 +260,8 @@ namespace UltimateTiming.DomainModel
 
                 //Always use the start of the race.  No need to do an initial start split at this time
 
-                var runner = FindRunner(request.TagId);
 
+                var runner = FindRunner(request.RaceXRunnerID.ToString());
                 var startSplit = runner.GetStartSplit();
                 if (startSplit == null && request.Reader.ReaderName != RFIDReader.HQ_READER_NAME) //If there's no start split available then add it here - should only happen if we missed the runner at the start
                 {
@@ -287,7 +287,7 @@ namespace UltimateTiming.DomainModel
                 {
                     Id = Guid.NewGuid().ToString(),
                     AbsoluteTime = request.AbsoluteTime,
-                    RaceXRunnerId = runner.RaceXRunnerId,
+                    RaceXRunnerId = request.RaceXRunnerID.ToString(),
                     ReaderTimestamp = request.TimeStamp,
                     ElapsedTime = (long)elapsedTime,
                     Status = TimeEntryStatus.Unknown,
@@ -304,11 +304,11 @@ namespace UltimateTiming.DomainModel
             }
             catch (RunnerNotFoundException)
             {
-                response.Errors.Add($"Tag ID {request.TagId} was not found");
+                response.Errors.Add($"Runner for RaceXRunnerID {request.RaceXRunnerID} was not found");
             }
             catch (Exception e)
             {
-                response.Errors.Add($"Error adding time entry for {request.TagId}: {e.Message}");
+                response.Errors.Add($"Error adding time entry for {request.RaceXRunnerID}: {e.Message}");
             }
 
 

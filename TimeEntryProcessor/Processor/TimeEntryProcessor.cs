@@ -70,7 +70,9 @@ namespace TimeEntryProcessor.Processor
             var race = repo.GetCurrentRace();
             var response = race.AddTimeEntry(new UltimateTiming.DomainModel.TimeEntryRequest()
             {
-
+                RaceXRunnerID = entry.RaceXRunnerID,
+                AbsoluteTime = entry.AbsoluteTime,
+                Reader = entry.RFIDReaderID
             });
             var split = response.NewSplit;
             return new Split();
