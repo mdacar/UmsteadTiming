@@ -30,7 +30,6 @@ namespace UltimateTiming.DomainModel
                 if (value != _raceXRunnerId)
                 {
                     _raceXRunnerId = value;
-                    SetPropertyChanged();
                 }
             }
 
@@ -47,7 +46,6 @@ namespace UltimateTiming.DomainModel
                 if (value != _elapsedTime)
                 {
                     _elapsedTime = value;
-                    SetPropertyChanged();
                 }
             }
 
@@ -62,7 +60,6 @@ namespace UltimateTiming.DomainModel
             {
 
                 _absoluteTime = value;
-                SetPropertyChanged();
             }
 
         }
@@ -77,7 +74,6 @@ namespace UltimateTiming.DomainModel
                 if (value != _readerTimestamp)
                 {
                     _readerTimestamp = value;
-                    SetPropertyChanged();
                 }
             }
 
@@ -93,7 +89,6 @@ namespace UltimateTiming.DomainModel
                 if (value != _reader)
                 {
                     _reader = value;
-                    SetPropertyChanged();
                 }
             }
         }
@@ -109,7 +104,6 @@ namespace UltimateTiming.DomainModel
                 if (value != _status)
                 {
                     _status = value;
-                    SetPropertyChanged();
                 }
             }
         }
@@ -124,7 +118,6 @@ namespace UltimateTiming.DomainModel
                 if (value != _statusReason)
                 {
                     _statusReason = value;
-                    SetPropertyChanged();
                 }
             }
 
@@ -140,7 +133,6 @@ namespace UltimateTiming.DomainModel
                 if (value != _timeEntrySource)
                 {
                     _timeEntrySource = value;
-                    SetPropertyChanged();
                 }
             }
 
@@ -174,9 +166,6 @@ namespace UltimateTiming.DomainModel
             }
         }
 
-        public override bool IsDirty()
-        {
-            return IsThisDirty;
-        }
+        public string ReaderName { get; set; }
     }
 }

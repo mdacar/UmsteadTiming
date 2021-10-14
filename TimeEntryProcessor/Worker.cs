@@ -35,6 +35,7 @@ namespace TimeEntryProcessor
 
             _influxClient.SendMetric($"{METRIC_PREFIX}_execute", 1);
             var config = GetConsumerConfig();
+            var processor = new TimeEntryProcessingFacade(_configuration);
 
             using (var consumer = new ConsumerBuilder<Ignore, string>(config).Build())
             {
@@ -52,7 +53,7 @@ namespace TimeEntryProcessor
                         _influxClient.SendMetric($"{METRIC_PREFIX}_gotmessage", 1);
                         //Got a message, do something with it now
                         var timeEntry = JsonConvert.DeserializeObject<TimeEntry>(consumeResult.Message.Value);
-                        var processor = new TimeEntryProcessingFacade(_configuration);
+                        
                         processor.ProcessTimeEntry(timeEntry);
                         
                     }

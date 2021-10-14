@@ -26,25 +26,9 @@ namespace UltimateTiming.DomainModel.Sorting
         {
             var response = SortRunnerTimeEntries(runner);
 
-            SetHasMissingSplits(runner, response.Splits);
-
             return response;
         }
 
-        private void SetHasMissingSplits(Runner runner, IList<Split> splits)
-        {
-            if (splits.Any())
-            {
-                var lastSplit = splits.Where(s => s.ElapsedMilliseconds == splits.Max(s2 => s2.ElapsedMilliseconds)).FirstOrDefault();
-                var totalCheckpointSequence = _checkpoints.Where(cp => !cp.LongName.Contains("Airport") && cp.Sequence <= lastSplit.CheckPoint.Sequence).Sum(cp => cp.Sequence);
-                var runnerCheckpointSequence = splits.Where(s => !s.CheckPoint.LongName.Contains("Airport")).Sum(s => s.CheckPoint.Sequence);
-                runner.HasMissingSplits = totalCheckpointSequence != runnerCheckpointSequence;
-            }
-            else
-            {
-                runner.HasMissingSplits = false;
-            }
-        }
 
 
         #region Sorting Related
@@ -54,7 +38,7 @@ namespace UltimateTiming.DomainModel.Sorting
             //var timeEntries = RemoveDuplicates(runner.TimeEntries);
             //Only get the primary tags unless the primary tag was missed
             var orderedEntries = runner.TimeEntries
-                .OrderBy(t => t.ElapsedTime).ThenBy(t => t.Source.Id);
+                .OrderBy(t => t.ElapsedTime).ThenBy(t => t.TimeEntrySourceId);
 
             CheckPoint lastCheckPoint = null;
             CheckPoint currentCheckPoint = null;
@@ -79,45 +63,38 @@ namespace UltimateTiming.DomainModel.Sorting
                 }
                 else
                 {
-                    if (IsSecondary(entry, runner))
+
+                    //Check to see if the entry is too close to another entry at the same checkpoint i.e. read twice
+                    if (IsTooClose(entry, runner))
                     {
-                        entry.Status = TimeEntryStatus.Secondary;
-                        entry.StatusReason = "Secondary";
                         continue;
                     }
                     else
                     {
-                        //Check to see if the entry is too close to another entry at the same checkpoint i.e. read twice
-                        if (IsTooClose(entry, runner))
+                        if (entry.Status == TimeEntryStatus.Valid || entry.Status == TimeEntryStatus.ModifiedValid || entry.Status == TimeEntryStatus.Unknown)
                         {
-                            continue;
-                        }
-                        else
-                        {
-                            if (entry.Status == TimeEntryStatus.Valid || entry.Status == TimeEntryStatus.ModifiedValid || entry.Status == TimeEntryStatus.Unknown)
+
+                            currentCheckPoint = GetCurrentCheckPoint(entry, lastCheckPoint);
+                            if (currentCheckPoint == null)
                             {
-
-                                currentCheckPoint = GetCurrentCheckPoint(entry, lastCheckPoint);
-                                if (currentCheckPoint == null)
-                                {
-                                    response.Errors.Add($"Entry for {entry.RaceXRunnerId} had an invalid checkpoint");
-                                    entry.Status = TimeEntryStatus.Invalid;
-                                    entry.StatusReason = "Unknown checkpoint";
-                                }
-                                else
-                                {
-                                    lastCheckPoint = currentCheckPoint;
-
-                                    response.Splits.Add(CreateSplit(currentCheckPoint, entry, runner));
-                                }
+                                response.Errors.Add($"Entry for {entry.RaceXRunnerId} had an invalid checkpoint");
+                                entry.Status = TimeEntryStatus.Invalid;
+                                entry.StatusReason = "Unknown checkpoint";
                             }
                             else
                             {
-                                if (entry.Status != TimeEntryStatus.Invalid)
-                                    response.Errors.Add($"Entry for {entry.RaceXRunnerId} had an invalid status of {entry.Status}");
+                                lastCheckPoint = currentCheckPoint;
+
+                                response.Splits.Add(CreateSplit(currentCheckPoint, entry, runner));
                             }
                         }
+                        else
+                        {
+                            if (entry.Status != TimeEntryStatus.Invalid)
+                                response.Errors.Add($"Entry for {entry.RaceXRunnerId} had an invalid status of {entry.Status}");
+                        }
                     }
+ 
                 }
             }
             return response;
@@ -128,7 +105,7 @@ namespace UltimateTiming.DomainModel.Sorting
 
         private CheckPoint GetCurrentCheckPoint(TimeEntry entry, CheckPoint lastCheckPoint)
         {
-            var timingLocation = _timingLocations.Where(t => string.Compare(t.Code, entry.Reader.ReaderName, true) == 0).FirstOrDefault();
+            var timingLocation = _timingLocations.Where(t => string.Compare(t.Code, entry.ReaderName, true) == 0).FirstOrDefault();
             var checkPointsForTimingLocation = _checkpoints.Where(c => c.TimingLocation.Code == timingLocation.Code).OrderBy(c => c.Sequence);
             //No previous checkpoints have been hit so this must be the start
             if (lastCheckPoint == null)
@@ -146,7 +123,7 @@ namespace UltimateTiming.DomainModel.Sorting
         {
             //If it's not marked as invalid or secondary above see if there's another time entry from the same location in the last configured timespan
 
-            var entriesSameLocation = runner.TimeEntries.Where(t => string.Compare(t.Reader.ReaderName, entry.Reader.ReaderName, true) == 0
+            var entriesSameLocation = runner.TimeEntries.Where(t => t.RFIDReaderId == entry.RFIDReaderId
                 && t.ElapsedTime < entry.ElapsedTime
                 && entry.ElapsedTime != t.ElapsedTime
                 && (t.Status != TimeEntryStatus.Invalid && t.Status != TimeEntryStatus.Secondary && t.Status != TimeEntryStatus.Valid));
@@ -163,20 +140,7 @@ namespace UltimateTiming.DomainModel.Sorting
             return false;
         }
 
-        private bool IsSecondary(TimeEntry entry, Runner runner)
-        {
-            if (entry.Source.Description != "RFID Reader")
-            {
-                //If the time entry is from something other than an RFID reader and I have an RFID reader entry within 5 minutes mark it as secondary and therefore not relevant.
-                if (runner.TimeEntries.Where(te => te.Source.Description == "RFID Reader" && te.Reader.Id == entry.Reader.Id).Any(t => Math.Abs(t.ElapsedTime - entry.ElapsedTime) < 1800000))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
+ 
         private bool IsEntryPastFinish(CheckPoint lastCheckpoint, TimeEntry entry)
         {
             //TODO: Figure out how to make this work if the last checkpoint isn't greater than 100 miles.  I.E. Missing the final HQ split and getting to the airport a 9th time.

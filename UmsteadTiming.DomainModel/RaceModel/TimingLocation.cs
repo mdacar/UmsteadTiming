@@ -44,10 +44,5 @@ namespace UltimateTiming.DomainModel
         }
 
         public string RaceId { get; set; }
-
-        public override bool IsDirty()
-        {
-            return IsThisDirty;
-        }
     }
 }

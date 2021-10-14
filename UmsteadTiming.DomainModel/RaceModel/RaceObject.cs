@@ -72,7 +72,6 @@ namespace UltimateTiming.DomainModel
 
         }
 
-        public abstract bool IsDirty();
 
         public RaceObject()
         {

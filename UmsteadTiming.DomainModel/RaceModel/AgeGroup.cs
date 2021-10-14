@@ -91,9 +91,5 @@ namespace UltimateTiming.DomainModel
 
         public List<Runner> Runners { get; set; }
 
-        public override bool IsDirty()
-        {
-            return IsThisDirty;
-        }
     }
 }

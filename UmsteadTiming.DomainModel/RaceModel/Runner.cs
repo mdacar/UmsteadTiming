@@ -20,7 +20,6 @@ namespace UltimateTiming.DomainModel
 
         private void Initialize()
         {
-            _backupTimeEntries = new List<TimeEntry>();
             _primaryTimeEntries = new List<TimeEntry>();
             _splits = new List<Split>();
         }
@@ -36,28 +35,9 @@ namespace UltimateTiming.DomainModel
                 if (_firstName != value)
                 {
                     _firstName = value;
-                    SetPropertyChanged();
+                    
                 }
             }
-        }
-
-        public List<Split> GetProjectedSplits()
-        {
-            var projectedSplits = new List<Split>();
-
-            foreach (var chk in Race.CheckPoints)
-            {
-                if (!Splits.Any(s => s.CheckPoint.Id == chk.Id))
-                {
-                    projectedSplits.Add(new Split()
-                    {
-                        CheckPoint = chk,
-
-                    });
-                }
-            }
-
-            return projectedSplits;
         }
 
         private string _lastName;
@@ -69,7 +49,7 @@ namespace UltimateTiming.DomainModel
                 if (_lastName != value)
                 {
                     _lastName = value;
-                    SetPropertyChanged();
+                    
                 }
             }
         }
@@ -85,7 +65,7 @@ namespace UltimateTiming.DomainModel
                 if (_number != value)
                 {
                     _number = value;
-                    SetPropertyChanged();
+                    
                 }
             }
         }
@@ -100,7 +80,7 @@ namespace UltimateTiming.DomainModel
                 if (value != _tagId)
                 {
                     _tagId = value;
-                    SetPropertyChanged();
+                    
                 }
             }
         }
@@ -114,7 +94,7 @@ namespace UltimateTiming.DomainModel
                 if (_runnerId != value)
                 {
                     _runnerId = value;
-                    SetPropertyChanged();
+                    
                 }
             }
         }
@@ -130,7 +110,7 @@ namespace UltimateTiming.DomainModel
                 if (_dateOfBirth != value)
                 {
                     _dateOfBirth = value;
-                    SetPropertyChanged();
+                    
                 }
             }
         }
@@ -170,51 +150,17 @@ namespace UltimateTiming.DomainModel
             }
         }
 
-        public void AddSplits(IEnumerable<Split> splits)
-        {
-            _splits = new List<Split>();
-            _splits.AddRange(splits);
-        }
-
-
 
         private List<TimeEntry> _primaryTimeEntries;
-        private List<TimeEntry> _backupTimeEntries;
 
-        public IReadOnlyList<TimeEntry> TimeEntries
+
+        public List<TimeEntry> TimeEntries
         {
             get
             {
-                var mergedList = new List<TimeEntry>(_primaryTimeEntries);
-                foreach (var te in _backupTimeEntries)
-                {
-                    if (!mergedList.Any(t => t.Reader.Id == te.Reader.Id && Math.Abs(t.ElapsedTime - te.ElapsedTime) < 5000))
-                    {
-                        mergedList.Add(te);
-                    }
-                }
-                return mergedList.AsReadOnly();
+                return new List<TimeEntry>(_primaryTimeEntries);                
             }
         }
-
-        public IReadOnlyList<TimeEntry> AllTimeEntries
-        {
-            get
-            {
-                var mergedList = new List<TimeEntry>(_primaryTimeEntries);
-                mergedList.AddRange(_backupTimeEntries);
-                return mergedList.AsReadOnly();
-            }
-        }
-
-
-
-        //private CheckPoint _lastCheckPoint;
-        //public CheckPoint LastCheckPoint
-        //{
-        //    get { return _lastCheckPoint; }
-        //}
-
 
 
         private int _ageOnRaceday;
@@ -241,7 +187,7 @@ namespace UltimateTiming.DomainModel
                 if (_city != value)
                 {
                     _city = value;
-                    SetPropertyChanged();
+                    
                 }
             }
         }
@@ -257,7 +203,7 @@ namespace UltimateTiming.DomainModel
                 if (_state != value)
                 {
                     _state = value;
-                    SetPropertyChanged();
+                    
                 }
             }
         }
@@ -277,27 +223,12 @@ namespace UltimateTiming.DomainModel
                 if (value != _middleInitial)
                 {
                     _middleInitial = value;
-                    SetPropertyChanged();
+                    
                 }
             }
 
         }
 
-
-        private string _suffix;
-        public string Suffix
-        {
-            get { return _suffix; }
-            set
-            {
-                if (value != _suffix)
-                {
-                    _suffix = value;
-                    SetPropertyChanged();
-                }
-            }
-
-        }
 
 
         private string _sex;
@@ -309,7 +240,7 @@ namespace UltimateTiming.DomainModel
                 if (value != _sex)
                 {
                     _sex = value;
-                    SetPropertyChanged();
+                    
                 }
             }
 
@@ -332,39 +263,13 @@ namespace UltimateTiming.DomainModel
                 if (value != _fullName)
                 {
                     _fullName = value;
-                    SetPropertyChanged();
+                    
                 }
             }
 
         }
 
 
-
-        public string ProperName
-        {
-            get
-            {
-                string properName = $"{FirstName} {LastName}";
-                if (!string.IsNullOrWhiteSpace(MiddleInitial))
-                {
-                    if (MiddleInitial.Length == 1)
-                    {
-                        properName = $"{FirstName} {MiddleInitial}. {LastName}";
-                    }
-                    else
-                    {
-                        properName = $"{FirstName} {MiddleInitial} {LastName}";
-                    }
-
-                }
-                if (!string.IsNullOrWhiteSpace(Suffix))
-                {
-                    properName += $" {Suffix}";
-                }
-                return properName;
-            }
-
-        }
 
         internal Split GetStartSplit()
         {
@@ -381,7 +286,7 @@ namespace UltimateTiming.DomainModel
                 if (value != _stopped)
                 {
                     _stopped = value;
-                    SetPropertyChanged();
+                    
 
                 }
             }
@@ -396,7 +301,7 @@ namespace UltimateTiming.DomainModel
                 if (value != _past100MileFinishes)
                 {
                     _past100MileFinishes = value;
-                    SetPropertyChanged();
+                    
 
                 }
             }
@@ -411,7 +316,7 @@ namespace UltimateTiming.DomainModel
                 if (value != _past50MileFinishes)
                 {
                     _past50MileFinishes = value;
-                    SetPropertyChanged();
+                    
 
                 }
             }
@@ -448,18 +353,10 @@ namespace UltimateTiming.DomainModel
 
         public TimeEntry AddTimeEntry(TimeEntry timeEntry)
         {
-            if (!_primaryTimeEntries.Any(t => t.ReaderTimestamp == timeEntry.ReaderTimestamp) || !_backupTimeEntries.Any(t => t.ReaderTimestamp == timeEntry.ReaderTimestamp))
+            if (!_primaryTimeEntries.Any(t => t.ReaderTimestamp == timeEntry.ReaderTimestamp))
             {
-                switch (timeEntry.TagType)
-                {
-
-                    case "B":
-                        _backupTimeEntries.Add(timeEntry);
-                        break;
-                    default:
-                        _primaryTimeEntries.Add(timeEntry);
-                        break;
-                }
+                //only add to the list if it's not already there - using the timestamp as a unique identifier
+                _primaryTimeEntries.Add(timeEntry);
             }
 
             return timeEntry;
@@ -471,17 +368,6 @@ namespace UltimateTiming.DomainModel
             timeEntry.Status = TimeEntryStatus.Invalid;
             return timeEntry;
         }
-
-        public bool HasInvalidTimeEntries
-        {
-            get
-            {
-                return TimeEntries.Any(te => te.Status == TimeEntryStatus.Invalid);
-            }
-        }
-
-
-        public bool HasMissingSplits { get; set; }
 
         public IList<string> SortTimeEntries(ITimeEntrySorter sorter)
         {
@@ -527,10 +413,10 @@ namespace UltimateTiming.DomainModel
 
         public bool OnFinalLap()
         {
-            //if the race has a lap 7 then check if the runner has gotten that far
-            if (Race.CheckPoints.Any(c => c.ShortName == "LAP7"))
+            //Check if the race has a final lap specified and if the runner has any splits (don't care about people who haven't started)
+            if (Race.CheckPoints.Any(c => c.FinalLap) && Splits.Any())
             {
-                return Splits.Any(s => s.CheckPoint?.ShortName == "LAP7") && !IsFinished();
+                return Splits.Any(s => s.CheckPoint.FinalLap) && !IsFinished();
             }
             //If there isn't a lap 7 then I don't know what 
             return false;
@@ -570,13 +456,6 @@ namespace UltimateTiming.DomainModel
         }
 
 
-
-
-        public override bool IsDirty()
-        {
-            return IsThisDirty || TimeEntries.Any(t => t.IsDirty());
-        }
-
         public override string ToString()
         {
             return LastName + ", " + FirstName;
@@ -610,7 +489,6 @@ namespace UltimateTiming.DomainModel
 
         public void ClearTimeEntries()
         {
-            _backupTimeEntries.Clear();
             _primaryTimeEntries.Clear();
         }
     }

@@ -128,12 +128,6 @@ namespace UltimateTiming.DomainModel
         }
 
 
-        public override bool IsDirty()
-        {
-            return IsThisDirty || this.CheckPoint.IsDirty();
-        }
-
-
 
         public override string ToString()
         {

@@ -1,6 +1,6 @@
-﻿namespace TimeEntryProcessor.Processor
+﻿namespace TimeEntryProcessor.Processor.Models
 {
-    internal class Split
+    public class Split
     {
         public Split()
         {
@@ -12,7 +12,6 @@
         public string NotificationMessageFormat { get; set; }
         public string SplitTimeFormatted { get; set; }
 
-        public Runner Runner { get; set; }
         public string CheckPointName { get; set; }
     }
 }

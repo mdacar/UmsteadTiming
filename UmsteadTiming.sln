@@ -13,7 +13,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeEntrySimulator", "TimeE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeEntryProcessor", "TimeEntryProcessor\TimeEntryProcessor.csproj", "{2E971FAC-3482-4BED-B0E2-3C08A0DD4DEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UmsteadTiming.DomainModel", "UmsteadTiming.DomainModel\UmsteadTiming.DomainModel.csproj", "{5E7246B9-CADE-4381-B744-7CC3FC070767}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UmsteadTiming.DomainModel", "UmsteadTiming.DomainModel\UmsteadTiming.DomainModel.csproj", "{5E7246B9-CADE-4381-B744-7CC3FC070767}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotificationProcessor", "NotificationProcessor\NotificationProcessor.csproj", "{39BEF651-DFEC-49DF-9AEC-DE9A31B757EE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ResultsAPI", "ResultsAPI\ResultsAPI.csproj", "{B3EC8442-6A7A-47DD-806E-EC4B98D63579}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test Projects", "Test Projects", "{CE6DAEB9-1B95-4646-9A7D-B5C151CCBBE7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimeEntryProcessor.Tests", "TimeEntryProcessor.Tests\TimeEntryProcessor.Tests.csproj", "{B812D6AC-FDDA-4ADE-96CE-87C2E64E5D10}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,9 +53,24 @@ Global
 		{5E7246B9-CADE-4381-B744-7CC3FC070767}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E7246B9-CADE-4381-B744-7CC3FC070767}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E7246B9-CADE-4381-B744-7CC3FC070767}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39BEF651-DFEC-49DF-9AEC-DE9A31B757EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39BEF651-DFEC-49DF-9AEC-DE9A31B757EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39BEF651-DFEC-49DF-9AEC-DE9A31B757EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39BEF651-DFEC-49DF-9AEC-DE9A31B757EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3EC8442-6A7A-47DD-806E-EC4B98D63579}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3EC8442-6A7A-47DD-806E-EC4B98D63579}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3EC8442-6A7A-47DD-806E-EC4B98D63579}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3EC8442-6A7A-47DD-806E-EC4B98D63579}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B812D6AC-FDDA-4ADE-96CE-87C2E64E5D10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B812D6AC-FDDA-4ADE-96CE-87C2E64E5D10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B812D6AC-FDDA-4ADE-96CE-87C2E64E5D10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B812D6AC-FDDA-4ADE-96CE-87C2E64E5D10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B812D6AC-FDDA-4ADE-96CE-87C2E64E5D10} = {CE6DAEB9-1B95-4646-9A7D-B5C151CCBBE7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C700C86A-4C8F-4D44-B765-DCDDFC0897B9}

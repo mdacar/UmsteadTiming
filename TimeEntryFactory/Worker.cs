@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Concurrent;
 
 namespace TimeEntryFactory
 {
@@ -19,6 +20,8 @@ namespace TimeEntryFactory
         private readonly InfluxClient _influxClient;
         private readonly IConfiguration _configuration;
         public const string METRIC_PREFIX = "time_entry_factory";
+        private bool _isQueueProcessing = false;
+        private ConcurrentQueue<TimeEntry> _timeEntryQueue = new ConcurrentQueue<TimeEntry>();
 
         public Worker(ILogger<Worker> logger, IConfiguration configuration)
         {
@@ -30,7 +33,7 @@ namespace TimeEntryFactory
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var currentRace = Race.GetCurrentRace(_configuration);
-
+            
             _influxClient.SendMetric($"{Worker.METRIC_PREFIX}_time_entry_factory_execute", 1);
             var config = GetConsumerConfig();
 
@@ -40,7 +43,7 @@ namespace TimeEntryFactory
                 while (!stoppingToken.IsCancellationRequested)
                 {
                     _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                    await Task.Delay(1000, stoppingToken);
+                    
 
                     //Pull from Kafka to get available reader events
                     var consumeResult = consumer.Consume();
@@ -50,31 +53,55 @@ namespace TimeEntryFactory
                     if (!string.IsNullOrWhiteSpace(consumeResult.Message.Value))
                     {
                         _influxClient.SendMetric($"{Worker.METRIC_PREFIX}_gotmessage", 1);
-                    }
 
-                    //Convert this message to a TagRead so I can convert it to a TimeEntry
+                        //Convert this message to a TagRead so I can convert it to a TimeEntry
 
-                    var timeEntry = GetTimeEntry(currentRace, consumeResult.Message.Value);
+                        var timeEntry = GetTimeEntry(currentRace, consumeResult.Message.Value);
 
-                    if (timeEntry != null)
-                    {
-                        //Throw it to the processor queue
-                        var producerConfig = GetProducerConfig();
-
-
-                        using (var producer = new ProducerBuilder<Null, string>(producerConfig).Build())
+                        if (timeEntry != null)
                         {
-                            producer.Produce("time_entries", new Message<Null, string> { Value = JsonConvert.SerializeObject(timeEntry) }, DeliveryHandler);
-                            producer.Flush(TimeSpan.FromSeconds(10));
-                            _influxClient.SendMetric($"{Worker.METRIC_PREFIX}_time_entry_created", 1);
-                        }
+                            //Throw it to the processor queue
 
+                            _timeEntryQueue.Enqueue(timeEntry);
+                            if (!_isQueueProcessing)
+                            {
+                                ProcessTimeEntryQueue();
+                            }
+                        }
                     }
-                    
+                    else
+                    {
+                        await Task.Delay(1000, stoppingToken);
+                    }
                 }
 
                 consumer.Close();
             }
+        }
+
+        private Task ProcessTimeEntryQueue()
+        {
+            return Task.Factory.StartNew(() =>
+            {       
+                if (_timeEntryQueue.Count > 0)
+                {
+                    _isQueueProcessing = true;
+                    var producerConfig = GetProducerConfig();
+                    using (var producer = new ProducerBuilder<Null, string>(producerConfig).Build())
+                    {
+                        TimeEntry timeEntry;
+
+                        while (_timeEntryQueue.TryDequeue(out timeEntry))
+                        {
+
+                            producer.Produce("time_entries", new Message<Null, string> { Value = JsonConvert.SerializeObject(timeEntry) }, DeliveryHandler);
+                            producer.Flush(TimeSpan.FromSeconds(10));
+                            _influxClient.SendMetric($"{Worker.METRIC_PREFIX}_time_entry_created", 1);
+                        }
+                        _isQueueProcessing = false;
+                    }
+                }
+            });
         }
 
         private void DeliveryHandler(DeliveryReport<Null, string> report)

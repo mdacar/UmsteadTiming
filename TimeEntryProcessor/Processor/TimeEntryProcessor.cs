@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using TimeEntryProcessor.Processor.Models;
 
 namespace TimeEntryProcessor.Processor
 {
@@ -13,29 +14,40 @@ namespace TimeEntryProcessor.Processor
     {
         private readonly IConfiguration _configuration;
         private readonly InfluxClient _influxClient;
+        private Race _currentRace;
+        private readonly RaceRepository _raceRepo;
 
         public TimeEntryProcessingFacade(IConfiguration configuration)
         {
             _configuration = configuration;
             _influxClient = new InfluxClient(_configuration["InfluxClientToken"]);
+
+            _raceRepo = new RaceRepository(_configuration["UltimateTimingDBConnection"]);
+            //_raceRepo = new RaceRepository("Server=MikeD-Desktop2;Database=UltimateTiming;Integrated Security=true;");
+            _currentRace = _raceRepo.GetCurrentRace();
         }
 
         public void ProcessTimeEntry(TimeEntry entry)
         {
-            
+            //Save to the DB
             SaveTimeEntry(entry);
 
-            var split = GetSplit(entry);
+            //Add it to the race to see if we need to send a notification
+            var response = AddTimeEntryToRace(entry);
 
+            var runner = response.Runner;
+            var split = response.NewSplit;
+
+            //only have a split if the time entry was deemed to be valid
             if (split != null)
             {
                 if (split.SendNotifications)
                 {
-                    //drop the info into the notification queue
+                    //drop the info into the notification stream
                     var notificationRequest = new NotificationRequest();
-                    notificationRequest.RaceXRunnerID = split.Runner.RaceXRunnerID;
+                    notificationRequest.RaceXRunnerID = runner.RaceXRunnerID;
                     notificationRequest.Message = split.NotificationMessageFormat
-                        .Replace("{{RunnerName}}", $"{split.Runner.FirstName} {split.Runner.LastName}")
+                        .Replace("{{RunnerName}}", $"{runner.FirstName} {runner.LastName}")
                         .Replace("{{Distance}}", $"{split.Distance}")
                         .Replace("{{CheckPointName}}", split.CheckPointName)
                         .Replace("{{SplitTime}}", split.SplitTimeFormatted);
@@ -64,24 +76,14 @@ namespace TimeEntryProcessor.Processor
             Console.WriteLine(report.Error.Reason);
         }
 
-        private Split GetSplit(TimeEntry entry)
+        private AddTimeEntryResponse AddTimeEntryToRace(TimeEntry entry)
         {
-            var repo = new RaceRepository(_configuration["UltimateTimingDBConnection"]);
-            var race = repo.GetCurrentRace();
-            var response = race.AddTimeEntry(new UltimateTiming.DomainModel.TimeEntryRequest()
-            {
-                RaceXRunnerID = entry.RaceXRunnerID,
-                AbsoluteTime = entry.AbsoluteTime,
-                Reader = entry.RFIDReaderID
-            });
-            var split = response.NewSplit;
-            return new Split();
+            return _currentRace.AddTimeEntry(entry);
         }
 
         private void SaveTimeEntry(TimeEntry entry)
         {
-            RaceRepository repo = new RaceRepository(_configuration["UltimateTimingDBConnection"]);
-            repo.SaveTimeEntry(entry);
+            _raceRepo.SaveTimeEntry(entry);
         }
 
         private ProducerConfig GetProducerConfig()

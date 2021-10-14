@@ -30,10 +30,10 @@ namespace UltimateTiming.DomainModel
 
         private void InitializeCollections()
         {
-            this.Runners = new ObservableCollection<Runner>();
-            this.CheckPoints = new ObservableCollection<CheckPoint>();
-            this.TimingLocations = new ObservableCollection<TimingLocation>();
-            this.AgeGroups = new ObservableCollection<AgeGroup>();
+            this.Runners = new List<Runner>();
+            this.CheckPoints = new List<CheckPoint>();
+            this.TimingLocations = new List<TimingLocation>();
+            this.AgeGroups = new List<AgeGroup>();
             _timeEntrySources = new List<TimeEntrySource>();
             RFIDReaders = new List<RFIDReader>();
         }
@@ -60,9 +60,9 @@ namespace UltimateTiming.DomainModel
 
 
 
-        private ObservableCollection<Runner> _runners;
+        private List<Runner> _runners;
 
-        public ObservableCollection<Runner> Runners
+        public List<Runner> Runners
         {
             get
             {
@@ -97,9 +97,9 @@ namespace UltimateTiming.DomainModel
 
 
 
-        private ObservableCollection<CheckPoint> _checkPoints;
+        private List<CheckPoint> _checkPoints;
 
-        public ObservableCollection<CheckPoint> CheckPoints
+        public List<CheckPoint> CheckPoints
         {
             get { return _checkPoints; }
             private set
@@ -113,9 +113,9 @@ namespace UltimateTiming.DomainModel
         }
 
 
-        private ObservableCollection<TimingLocation> _timingLocations;
+        private List<TimingLocation> _timingLocations;
 
-        public ObservableCollection<TimingLocation> TimingLocations
+        public List<TimingLocation> TimingLocations
         {
             get { return _timingLocations; }
             private set
@@ -129,9 +129,9 @@ namespace UltimateTiming.DomainModel
         }
 
 
-        private ObservableCollection<AgeGroup> _ageGroups;
+        private List<AgeGroup> _ageGroups;
 
-        public ObservableCollection<AgeGroup> AgeGroups
+        public List<AgeGroup> AgeGroups
         {
             get { return _ageGroups; }
             set { _ageGroups = value; }
@@ -150,24 +150,17 @@ namespace UltimateTiming.DomainModel
 
         public bool Completed { get; set; }
 
-        public override bool IsDirty()
-        {
-            return IsThisDirty
-                || Runners.Any(r => r.IsDirty())
-                || CheckPoints.Any(c => c.IsDirty())
-                || this.TimingLocations.Any(t => t.IsDirty());
-        }
 
         public int? RaceID { get; set; }
 
 
         private List<TimeEntrySource> _timeEntrySources;
 
-        public ReadOnlyCollection<TimeEntrySource> TimeEntrySources
+        public List<TimeEntrySource> TimeEntrySources
         {
             get
             {
-                return _timeEntrySources.AsReadOnly();
+                return _timeEntrySources;
             }
         }
 
@@ -194,7 +187,19 @@ namespace UltimateTiming.DomainModel
             return runner;
         }
 
+        public void AddTimeEntries(IList<TimeEntry> timeEntries)
+        {
+            var sorter = GetTimeEntrySorter();
 
+            foreach (var runner in Runners)
+            {
+                runner.AddTimeEntries(timeEntries.Where(t => t.RaceXRunnerId == runner.Id)
+                    .OrderBy(t => t.ReaderTimestamp).ToList());
+
+                runner.SortTimeEntries(sorter);
+            }
+
+        }
 
         public void AddRunner(Runner runner)
         {
@@ -218,10 +223,10 @@ namespace UltimateTiming.DomainModel
         {
             foreach (var runner in runners)
             {
-                runner.Race = this;
+                //runner.Race = this;
                 runner.AgeOnRaceday = GetRunnerAge(runner);
             }
-            Runners = new ObservableCollection<Runner>(runners);
+            Runners = new List<Runner>(runners);
             IsThisDirty = true;
         }
 
@@ -259,11 +264,12 @@ namespace UltimateTiming.DomainModel
             {
 
                 //Always use the start of the race.  No need to do an initial start split at this time
-
+                var reader = this.RFIDReaders.Where(r => r.Id == request.RFIDReaderID).FirstOrDefault();
+                var source = this.TimeEntrySources.Where(s => s.Id == request.Source).FirstOrDefault();
 
                 var runner = FindRunner(request.RaceXRunnerID.ToString());
                 var startSplit = runner.GetStartSplit();
-                if (startSplit == null && request.Reader.ReaderName != RFIDReader.HQ_READER_NAME) //If there's no start split available then add it here - should only happen if we missed the runner at the start
+                if (startSplit == null && reader.ReaderName != RFIDReader.HQ_READER_NAME) //If there's no start split available then add it here - should only happen if we missed the runner at the start
                 {
                     var startEntry = runner.AddTimeEntry(new TimeEntry()
                     {
@@ -291,8 +297,8 @@ namespace UltimateTiming.DomainModel
                     ReaderTimestamp = request.TimeStamp,
                     ElapsedTime = (long)elapsedTime,
                     Status = TimeEntryStatus.Unknown,
-                    Reader = request.Reader,
-                    Source = request.Source,
+                    Reader = reader,
+                    Source = source,
                     TagType = GetTagType(request.TagType)
                 });
                 response.NewTimeEntry.Add(timeEntry);
@@ -486,7 +492,7 @@ namespace UltimateTiming.DomainModel
             }
 
             CheckPoints.Add(checkPoint);
-            CheckPoints = new ObservableCollection<CheckPoint>(CheckPoints.OrderBy(c => c.Sequence));
+            CheckPoints = new List<CheckPoint>(CheckPoints.OrderBy(c => c.Sequence));
             IsThisDirty = true;
         }
 
@@ -511,7 +517,7 @@ namespace UltimateTiming.DomainModel
                     cp.TimingLocation = TimingLocations.Where(tl => tl.Id == cp.TimingLocationId).FirstOrDefault();
                 }
             }
-            CheckPoints = new ObservableCollection<CheckPoint>(checkPoints.OrderBy(c => c.Sequence));
+            CheckPoints = new List<CheckPoint>(checkPoints.OrderBy(c => c.Sequence));
             IsThisDirty = true;
         }
 

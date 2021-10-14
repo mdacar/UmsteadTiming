@@ -126,10 +126,7 @@ namespace UltimateTiming.DomainModel
         }
 
         public string SMSNotificationText { get; set; }
+        public bool FinalLap { get; internal set; }
 
-        public override bool IsDirty()
-        {
-            return IsThisDirty;
-        }
     }
 }
