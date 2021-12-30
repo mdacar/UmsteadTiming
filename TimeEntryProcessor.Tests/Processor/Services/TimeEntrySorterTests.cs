@@ -13,7 +13,7 @@ namespace TimeEntryProcessor.Tests
         [TestMethod]
         public void SortRunnerTimeEntries_HasDupes_MarksAsDupe()
         {
-            TimeEntrySorter sorter = new TimeEntrySorter(GetStandardTimingLocations(), GetStandardCheckpoints());
+            TimeEntrySorter sorter = GetStandardTimeEntrySorter();
             var runner = new Runner();
 
             var duplicateEntryGuid = new Guid();
